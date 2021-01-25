@@ -7,6 +7,8 @@ provider "random" {}
 
 resource "random_pet" "name" {}
 
+resource "random_pet2" "name" {}
+
 ## variables.tf of module
 variable "subnet" {
   default = "10.0.0.0/24"
@@ -14,13 +16,12 @@ variable "subnet" {
 variable "cidr_block" {
   default = "10.0.0.0/16"
 }
-variable "env" {}
 
 resource "aws_vpc" "vpc" {
   cidr_block           = var.cidr_block
   tags = {
-    Name = "${var.env}_vpc"
-    Env  = var.env
+    Name = "${random_pet2.name.id}_vpc"
+    Env  = random_pet2.name.id
   }
 }
 resource "aws_subnet" "subnet" {
@@ -29,15 +30,15 @@ resource "aws_subnet" "subnet" {
   map_public_ip_on_launch = "true"
 
   tags = {
-    Name = "${var.env}_subnet"
-    Env  = var.env
+    Name = "${random_pet2.name.id}_subnet"
+    Env  = random_pet2.name.id
   }
 }
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.vpc.id
 tags = {
-    Name = "${var.env}_gw"
-    Env  = var.env
+    Name = "${random_pet2.name.id}_gw"
+    Env  = random_pet2.name.id
   }
 }
 resource "aws_default_route_table" "route_table" {
@@ -48,7 +49,7 @@ route {
   }
 tags = {
     Name = "default route table"
-    env  = var.env
+    env  = random_pet2.name.id
   }
 }
 
